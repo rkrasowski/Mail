@@ -25,8 +25,6 @@ my @totalArray = (@newFiles,@readFiles);
 my $unreadNumber = @newFiles;
 my $totalNumber = @totalArray;
 my $totalArray;
-print "Unread number :$unreadNumber\n\n";
-print "Total number : $totalNumber\n";
 
 print "     Press 1 to check New Mail\n     Press 2 to check Read Mail\n     Press 3 to write Mail\n     Press X to exit\n\n";
 my $newFiles;
@@ -55,12 +53,25 @@ while(<>)
 				
 				while(<>)
 					{
-						my $arrayNum = $_ - 1;
-						my $sms = `cat /home/ubuntu/Mail/New/$newFiles[$arrayNum]`;
-						chomp $_;
-						print "Your message  number $_:\n\n";
-						print BOLD YELLOW "$sms\n\n";
-						print BOLD BLUE "Press X to returm the menu\nPress email number to read another email\n\n";
+						if ($_ <= $unreadNumber)
+							{
+								my $arrayNum = $_ - 1;
+								my $sms = `cat /home/ubuntu/Mail/New/$newFiles[$arrayNum]`;
+								chomp $_;
+								print "Your message  number $_:\n\n";
+								print BOLD YELLOW "$sms\n\n";
+								print BOLD BLUE "Press X to returm the menu\nPress email number to read another email\n\n";
+							}
+						
+						if ($_ > $unreadNumber and $_ <= $totalNumber)
+                                                        {
+                                                                my $arrayNum = $_ - 1 - $unreadNumber;
+                                                                my $sms = `cat /home/ubuntu/Mail/Read/$readFiles[$arrayNum]`;
+                                                                chomp $_;
+                                                                print "Your message  number $_:\n\n";
+                                                                print BOLD YELLOW "$sms\n\n";
+                                                                print BOLD BLUE "Press X to returm the menu\nPress email number to read another email\n\n";
+                                                        }
 
 
 					}

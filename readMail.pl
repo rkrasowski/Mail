@@ -23,8 +23,10 @@ close ($READ);
 
 my @totalArray = (@newFiles,@readFiles);
 my $unreadNumber = @newFiles;
+my $totalNumber = @totalArray;
+my $totalArray;
 print "Unread number :$unreadNumber\n\n";
-
+print "Total number : $totalNumber\n";
 
 print "     Press 1 to check New Mail\n     Press 2 to check Read Mail\n     Press 3 to write Mail\n     Press X to exit\n\n";
 my $newFiles;
@@ -35,23 +37,28 @@ while(<>)
 		if ($_ == 1)
 			{
 				
-				print " Your new emails:\n";
+				print "Messages:\n\n";
 				my $smsNum = 1;
-				foreach(@newFiles)
+					
+				my $i;
+				my $j;
+				for ($i = 1; $i <=$unreadNumber; $i++)
 					{
-						print "Mail number $smsNum : $_\n";
-						$smsNum++;
+						print BOLD RED "Unread message number $i: $newFiles[$i-1]\n";
+					}
+				for ($j = $unreadNumber+1; $j<= $totalNumber; $j++)
+					{			
+						print BOLD YELLOW"Old message number $j: $totalArray[$j-1]\n"; 
 
 					}
-				
-				print "Enter email number that you want to read and press ENTER\n";
+			print "\nEnter message number that you want to read and press ENTER\n";
 				
 				while(<>)
 					{
 						my $arrayNum = $_ - 1;
 						my $sms = `cat /home/ubuntu/Mail/New/$newFiles[$arrayNum]`;
 						chomp $_;
-						print "Your email number $_:\n";
+						print "Your message  number $_:\n\n";
 						print BOLD YELLOW "$sms\n\n";
 						print BOLD BLUE "Press X to returm the menu\nPress email number to read another email\n\n";
 

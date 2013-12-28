@@ -5,10 +5,12 @@ use warnings;
 use Term::ANSIColor qw(:constants);
 $Term::ANSIColor::AUTORESET = 1;
 
-
-
 my $newDirectory = "/home/ubuntu/Mail/New/";
 my $readDirectory = "/home/ubuntu/Mail/Read/";
+my $commandsDirectory = "/home/ubuntu/Mail/Commands/";
+my $numDisplayed = 10;
+
+
 STARTMESSAGES:
 
 opendir (my $NEW , $newDirectory) or die "Can not open new directory: $!\n";
@@ -26,13 +28,16 @@ my $unreadNumber = @newFiles;
 my $totalNumber = @totalArray;
 my $totalArray;
 
-print BOLD BLUE "\nMESSAGES MENAGER\n     Press 1 to check Messages\n     Press 2 to write Message\n     Press X to exit\n\n";
+print " Total message number : $totalNumber\n\n";
+
+
+print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press 1 to check Messages\n     Press 2 to write Message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
 my $newFiles;
 
 
 while(<>)
 	{
-		if ($_ == 1)
+		if ($_ =~ m/1/)
 			{	MESSAGEMENAGER:
 				
 				print "Messages:\n\n";
@@ -40,6 +45,7 @@ while(<>)
 					
 				my $i;
 				my $j;
+				
 				for ($i = 1; $i <=$unreadNumber; $i++)
 					{
 						print BOLD RED "Unread message number $i: $newFiles[$i-1]\n";
@@ -150,6 +156,89 @@ while(<>)
 
 
 			}
+		
+		if ($_ =~ m/2/)
+			{
+				print "Compose the message:\nEnter destination:\n\n";
+			}
+		
+		if ($_ =~ m/c/i)
+                        {
+                		opendir (my $COMMANDS , $commandsDirectory) or die "Can not open new directory: $!\n";
+				my @commandsFiles = grep !/^\./, readdir($COMMANDS);
+				close ($COMMANDS);               
+				my $commandsNumber = @commandsFiles;
+				my $commandsFiles;
+				my $i = 1;
+				
+				
+				print BOLD BLUE "COMMAND's LOG\n\n";
+				
+				foreach (@commandsFiles)
+					{
+						print BOLD GREEN "Command number $i: $_\n";
+						$i++;
+					}
+				print "\n";
+				READINGCOMMANDSFIRST:
+				print BOLD BLUE "     Enter command number that you want to read\n     Press X to exit\n\n";
+				while(<>)
+					{
+						if ($_ =~ m/x/i)
+							{
+								goto STARTMESSAGES;
+							}
+	
+						if ($_ =~ m/[0-$commandsNumber]/)
+
+						
+							{
+								  READINGCOMMANDS:
+
+								my $commands = `cat /home/ubuntu/Mail/Commands/$commandsFiles[$_ - 1]`;
+								print BOLD YELLOW "$commands\n\n";		
+			
+								print BOLD BLUE "Enter different number to read different command\n\nPress X to go to main menu\n\n";
+								while(<>)
+									{
+										if ($_ =~ m/[0-$commandsNumber]/)
+											{
+												goto READINGCOMMANDS;
+											}
+										if ($_ =~ m/x/i)
+											{
+												goto STARTMESSAGES;
+											}
+										else
+											{
+												print BOLD RED "Ups, try again ....\n";
+												goto READINGCOMMANDSFIRST;
+											}
+									}								
+								
+										
+							}
+						else 
+							{
+								print BOLD RED "Ups, try again\n";
+								goto READINGCOMMANDSFIRST;
+							}
+
+					}
+
+                        }
+
+
+
+
+
+		 if ($_ =~ m/x/i)
+                        {
+                                print "Exiting.....\n\n";
+				exit();
+                        }
+
+
 	}
 
 

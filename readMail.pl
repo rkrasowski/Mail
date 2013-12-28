@@ -15,11 +15,13 @@ STARTMESSAGES:
 
 opendir (my $NEW , $newDirectory) or die "Can not open new directory: $!\n";
 my @newFiles = grep !/^\./, readdir($NEW);
+@newFiles = sort @newFiles;
 close ($NEW);
 
 
 opendir (my $READ , $readDirectory) or die "Can not open new directory: $!\n";
 my @readFiles = grep !/^\./, readdir($READ);
+@readFiles = sort @readFiles;
 close ($READ);
 
 

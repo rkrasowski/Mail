@@ -33,35 +33,89 @@ my $totalArray;
 print " Total message number : $totalNumber\n\n";
 
 
-print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press 1 to check Messages\n     Press 2 to write Message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
+print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press N to check NEW Messages\n     Press O  to check OLD  Messages\n     Press W ro write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
 my $newFiles;
 
 
 while(<>)
 	{
-		if ($_ =~ m/1/)
+		if ($_ =~ m/N/i)
 			{	MESSAGEMENAGER:
-				
-				print "Messages:\n\n";
-				my $smsNum = 1;
-					
-				my $i;
-				my $j;
-				
-				for ($i = 1; $i <=$unreadNumber; $i++)
-					{
-						print BOLD RED "Unread message number $i: $newFiles[$i-1]\n";
-					}
-				for ($j = $unreadNumber+1; $j<= $totalNumber; $j++)
-					{			
-						print BOLD YELLOW"Old message number $j: $totalArray[$j-1]\n"; 
 
-					}
-			   	print "\nEnter message number that you want to read and press ENTER\n";
+
+
+
+
+				if ($numDisplayed >= $totalNumber)
+					{
+						print "Messages:\n\n";
+						my $smsNum = 1;
+					
+						my $i;
+						my $j;
 				
+						for ($i = 1; $i <=$unreadNumber; $i++)
+							{
+								print BOLD RED "Unread message number $i: $newFiles[$i-1]\n";
+							}
+						for ($j = $unreadNumber+1; $j<= $totalNumber; $j++)
+							{			
+								print BOLD YELLOW"Old message number $j: $totalArray[$j-1]\n"; 
+
+							}
+			   			print BOLD BLUE "\n\n      Enter message number that you want to read and press ENTER\n";
+
+		
+					}
+
+my $sep;
+				if ($numDisplayed < $totalNumber)
+					{
+						print "Last 10 mesages:\n\n";
+						
+						for ($sep = 1; $sep <=$numDisplayed; $sep++)
+							{
+                                                                print BOLD RED "Unread message number $sep: $newFiles[$sep-1]\n";
+                                                        }
+						print "Sep is $sep\n\n";
+						
+						print BOLD BLUE "\n\n     Enter message number that you want to read\n     Press M to see more messages\n\n";
+									
+						        
+					}
+
+
+				ONLY10:
+			
 				while(<>)
 					{
-						if ($_ <= $unreadNumber)
+						
+
+						if ($_ =~ m/m/i)
+							{
+								my $nextNum = $sep + $numDisplayed;
+								print "Messages $sep  - $nextNum\n";
+								
+								for ( $sep; $sep<=$nextNum; $sep++)
+                                                        		{
+                                                                		print BOLD RED "Unread message number $sep: $newFiles[$sep-1]\n";
+										if ($_ =~ m//)
+											{
+												goto READMESSAGES;
+											}
+                                                        		}
+                                                print "Sep is $sep\n\n";
+						print BOLD BLUE "\n\n     Enter message number that you want to read\n     Press M to see more messages\n\n";
+						goto ONLY10;
+
+
+						READMESSAGES: {print "Will do read messagse\n";}
+
+								
+							}
+					
+
+						elsif ($_ <= $unreadNumber)
 							{
 								my $arrayNum = $_ - 1;
 								my $sms = `cat /home/ubuntu/Mail/New/$newFiles[$arrayNum]`;
@@ -113,7 +167,7 @@ while(<>)
 									}
 							}
 						
-						if ($_ > $unreadNumber and $_ <= $totalNumber)
+						elsif ($_ > $unreadNumber and $_ <= $totalNumber)
                                                         {
                                                                 my $arrayNum = $_ - 1 - $unreadNumber;
                                                                 my $sms = `cat /home/ubuntu/Mail/Read/$readFiles[$arrayNum]`;

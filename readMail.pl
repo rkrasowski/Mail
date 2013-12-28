@@ -32,6 +32,7 @@ my $totalArray;
 
 print " Total message number : $totalNumber\n\n";
 
+START:
 
 print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press N to check NEW Messages\n     Press O  to check OLD  Messages\n     Press W ro write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
 my $newFiles;
@@ -40,11 +41,7 @@ my $newFiles;
 while(<>)
 	{
 		if ($_ =~ m/N/i)
-			{	MESSAGEMENAGER:
-
-
-
-
+			{
 
 				if ($numDisplayed >= $totalNumber)
 					{
@@ -68,7 +65,7 @@ while(<>)
 		
 					}
 
-my $sep;
+				my $sep;
 				if ($numDisplayed < $totalNumber)
 					{
 						print "Last 10 mesages:\n\n";
@@ -109,7 +106,7 @@ my $sep;
 						goto ONLY10;
 
 
-						READMESSAGES: {print "Will do read messagse\n";}
+						READMESSAGES: {print "All new messages\n";}
 
 								
 							}
@@ -128,7 +125,7 @@ my $sep;
 								
 								print "\nYour message  number $messageNumber:\n\n";
 								print BOLD YELLOW "$sms\n\n";
-								print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to messages list\n     Press x to erase this message\n\n";
+								print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to Main Menu\n     Press x to erase this message\n\n";
 								while(<>)
 									{
 										if ($_ =~ m/1/)
@@ -138,7 +135,7 @@ my $sep;
 
 										if ($_=~ m/2/)
 											{
-												goto STARTMESSAGES;
+												goto START;
 											}
 										if ($_=~ m/x/i)
 											{
@@ -151,12 +148,12 @@ my $sep;
                                                                                                                                 print "Message number $messageNumber dalated\n\n";
                                                                                                                                 unlink "/home/ubuntu/Mail/Read/$newFiles[$arrayNum]";
 
-                                                                                                                                goto STARTMESSAGES;
+                                                                                                                                goto START;
                                                                                                                         }
                                                                                                                 if ($_  =~ m/N/i)
                                                                                                                         {
                                                                                                                                 print "Message number $messageNumber NOT delated\n\n";
-                                                                                                                                goto STARTMESSAGES;
+                                                                                                                                goto START;
                                                                                                                         }
                                                                                                                 else {print "Try again , Y or N\n\n";}
 

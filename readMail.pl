@@ -72,7 +72,7 @@ while(<>)
 								
 								print "\nYour message  number $messageNumber:\n\n";
 								print BOLD YELLOW "$sms\n\n";
-								print BOLD BLUE "Press 1 to reply to this message\nPress 2 to return to messages list\nPress x to erase this message\n\n";
+								print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to messages list\n     Press x to erase this message\n\n";
 								while(<>)
 									{
 										if ($_ =~ m/1/)
@@ -86,22 +86,26 @@ while(<>)
 											}
 										if ($_=~ m/x/i)
 											{
-												print BOLD RED "Are you sure, you want to delay $messageNumber? Press Y or N !!\n\n";
-												while(<>)
-													{
-														if ($_ =~ m/Y/i)	
-															{
-																print "Message number $messageNumber dalated\n\n";
-																goto STARTMESSAGES;
-															}
-														if ($_  =~ m/N/i)
-															{
-																print "Message number $messageNumber NOT delated\n\n";
-																goto STARTMESSAGES;
-															}
-														else {print "Try again , Y or N\n\n";}
-													
-													}
+
+												print BOLD RED "Are you sure, you want to delay message number $messageNumber? Press Y or N !!\n\n";
+                                                                                                while(<>)
+                                                                                                        {
+                                                                                                                if ($_ =~ m/Y/i)
+                                                                                                                        {
+                                                                                                                                print "Message number $messageNumber dalated\n\n";
+                                                                                                                                unlink "/home/ubuntu/Mail/Read/$newFiles[$arrayNum]";
+
+                                                                                                                                goto STARTMESSAGES;
+                                                                                                                        }
+                                                                                                                if ($_  =~ m/N/i)
+                                                                                                                        {
+                                                                                                                                print "Message number $messageNumber NOT delated\n\n";
+                                                                                                                                goto STARTMESSAGES;
+                                                                                                                        }
+                                                                                                                else {print "Try again , Y or N\n\n";}
+
+                                                                                                        }
+
 											}
 										else {print "Try again, 1, 2 or x only\n\n";}
 									}
@@ -115,7 +119,7 @@ while(<>)
 								chomp $messageNumber;
                                                                 print "\nYour message  number $messageNumber:\n\n";
                                                                 print BOLD YELLOW "$sms\n\n";
-                                                                print BOLD BLUE "Press 1 to reply to this message\nPress 2 to return to messages list\nPress x to erase this message\n\n";
+                                                                print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to messages list\n     Press x to erase this message\n\n";
 
 								  while(<>)
                                                                         {
@@ -136,6 +140,8 @@ while(<>)
                                                                                                                 if ($_ =~ m/Y/i)
                                                                                                                         {
                                                                                                                                 print "Message number $messageNumber dalated\n\n";
+																unlink "/home/ubuntu/Mail/Read/$readFiles[$arrayNum]";
+
                                                                                                                                 goto STARTMESSAGES;
                                                                                                                         }
                                                                                                                 if ($_  =~ m/N/i)

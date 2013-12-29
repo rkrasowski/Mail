@@ -63,13 +63,13 @@ while(<>)
 				
 				print BOLD BLUE "\n     Enter message number that you want to read\n";
 					
-				if($i < $readNumber)
+				if($sumNumDisplayed < $readNumber)
 					{
 						print BOLD BLUE "     Press M to see more old messages\n";
 					}
 
 
-				print BOLD BLUE "     Press x to return to the main menue\n";
+				print BOLD BLUE "     Press X to return to the main menu\n";
 				print "\n";
 			while(<>)
 				{
@@ -77,20 +77,79 @@ while(<>)
 					if ($_ =~ m/[0-9]/)
 						{
 							chomp $_;
+							my $messageNumber = $_;
 							print BOLD GREEN "Old message number $_:\n\n";
 							my $oldMessage = `cat /home/ubuntu/Mail/Read/$readFiles[$_-1]`;
 							chomp $oldMessage;
-							print BOLD YELLOW "\""."$oldMessage"."\""."\n";
+							print BOLD YELLOW "\""."$oldMessage"."\""."\n\n";
+							
+							# After reading message;
+							print BOLD BLUE "     Press R to Replay to this message\n     Press D to delate this message\n     Press X to return to messages list\n     Press Q to return to mail menu\n\n";
+							while (<>)
+								{
+									if ($_ =~ m/r/i)
+										{
+											# Replay
+											print BOLD GREEN "REPLAY TO MESSAGE:\n\n";
+											print BOLD BLUE "Write text and press ENTER\n\n";
+	
+										}
+									if ($_ =~ m/d/i)
+										{
+											# Delate 
+											    print BOLD RED "Are you sure, you want to delay message number $messageNumber? Press Y or N !!\n\n";
+                                                                                                while(<>)
+                                                                                                        {
+                                                                                                                if ($_ =~ m/Y/i)
+                                                                                                                        {
+                                                                                                                                print "Message number $messageNumber dalated\n\n";
+                                                                                                                       #         unlink "/home/ubuntu/Mail/Read/$readFiles[$_ -1]";
+
+                                                                                                                                goto STARTMESSAGES;
+                                                                                                                        }
+                                                                                                                if ($_  =~ m/N/i)
+                                                                                                                        {
+                                                                                                                                print "Message number $messageNumber NOT delated\n\n";
+                                                                                                                                goto STARTMESSAGES;
+                                                                                                                        }
+                                                                                                                else {print "Try again , Y or N\n\n";}
+
+                                                                                                        }
+
+										}
+
+									if ($_ =~ m/x/i)
+										{
+											# Return 
+											$sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
+											$i = $i - $numDisplayed - 1;
+
+											goto OLDDISPLAY; 
+										}
+
+									 if ($_ =~ m/q/i)
+                                                                                {
+                                                                                        # Main menu
+                                                                                        goto STARTMESSAGES;
+                                                                                }
+								}
 						}
 
 					# Show More messages
 					if ($_ =~ m/m/i)
                                                 {
-						
+							#print BOLD RED "No more old messages\n\n";
 							goto OLDDISPLAY;
 
 
 						}
+
+					if ($_ =~ m/x/i)
+                                                {
+                                                 
+                                                        goto STARTMESSAGES;
+						}
+
 				}
                         }
 

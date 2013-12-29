@@ -8,7 +8,7 @@ $Term::ANSIColor::AUTORESET = 1;
 my $newDirectory = "/home/ubuntu/Mail/New/";
 my $readDirectory = "/home/ubuntu/Mail/Read/";
 my $commandsDirectory = "/home/ubuntu/Mail/Commands/";
-my $numDisplayed = 10;
+my $numDisplayed = 2;
 
 
 STARTMESSAGES:
@@ -29,6 +29,7 @@ my @totalArray = (@newFiles,@readFiles);
 my $unreadNumber = @newFiles;
 my $totalNumber = @totalArray;
 my $totalArray;
+my $readNumber = @readFiles;
 
 print " Total message number : $totalNumber\n\n";
 
@@ -40,6 +41,62 @@ my $newFiles;
 
 while(<>)
 	{
+		
+
+# Reading old messages
+		  if ($_=~ m/o/i)
+                        {
+                                my $i = 1;
+                                my $j = $i + $numDisplayed;
+				print "\nOld messages from $i - $j:\n\n";
+
+				OLDDISPLAY:
+				my $sumNumDisplayed = $i + $numDisplayed;
+				for ($i; $i <=$sumNumDisplayed; $i++)
+                                                        {	
+								if($readFiles[$i-1])
+									{
+										print BOLD YELLOW  "Old message number $i: $readFiles[$i-1]\n";
+									}
+								
+                                                        }
+				
+				print BOLD BLUE "\n     Enter message number that you want to read\n";
+					
+				if($i < $readNumber)
+					{
+						print BOLD BLUE "     Press M to see more old messages\n";
+					}
+
+
+				print BOLD BLUE "     Press x to return to the main menue\n";
+				print "\n";
+			while(<>)
+				{
+					# Read message
+					if ($_ =~ m/[0-9]/)
+						{
+							chomp $_;
+							print BOLD GREEN "Old message number $_:\n\n";
+							my $oldMessage = `cat /home/ubuntu/Mail/Read/$readFiles[$_-1]`;
+							chomp $oldMessage;
+							print BOLD YELLOW "\""."$oldMessage"."\""."\n";
+						}
+
+					# Show More messages
+					if ($_ =~ m/m/i)
+                                                {
+						
+							goto OLDDISPLAY;
+
+
+						}
+				}
+                        }
+
+
+# Reading new messages
+
 		if ($_ =~ m/N/i)
 			{
 
@@ -216,11 +273,19 @@ while(<>)
 
 			}
 		
-		if ($_ =~ m/2/)
+
+
+
+		if ($_ =~ m/w/i)
 			{
 				print "Compose the message:\nEnter destination:\n\n";
 			}
 		
+		
+
+
+
+
 		if ($_ =~ m/c/i)
                         {
                 		opendir (my $COMMANDS , $commandsDirectory) or die "Can not open new directory: $!\n";

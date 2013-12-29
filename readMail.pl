@@ -112,7 +112,6 @@ while(<>)
 							# Reading NEW messages
 							if($_ <= $unreadNumber)
 								{
-									print "New messages\n";
 									$messageNumber = $_;
 									print BOLD GREEN "New message number $_:\n\n";
 									my $newMessage = `cat /home/ubuntu/Mail/New/$totalArray[$_-1]`;
@@ -125,7 +124,6 @@ while(<>)
 							else 
 							# Reading old message
 								{
-									print "In old messages\n";
 									$messageNumber = $_;
                                                                         print BOLD GREEN "Message number $_:\n\n";
                                                                         my $oldMessage = `cat /home/ubuntu/Mail/Read/$totalArray[$_-1]`;

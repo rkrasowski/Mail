@@ -8,7 +8,7 @@ $Term::ANSIColor::AUTORESET = 1;
 my $newDirectory = "/home/ubuntu/Mail/New/";
 my $readDirectory = "/home/ubuntu/Mail/Read/";
 my $commandsDirectory = "/home/ubuntu/Mail/Commands/";
-my $numDisplayed = 2;
+my $numDisplayed = 10;
 
 
 STARTMESSAGES:
@@ -25,19 +25,18 @@ my @readFiles = grep !/^\./, readdir($READ);
 close ($READ);
 
 
-my @totalArray = (@newFiles,@readFiles);
+my @totalArray;
 my $totalArray;
-my $totalNumber = @totalArray;
+my $totalNumber;
 
-my $unreadNumber = @newFiles;
+my $unreadNumber;
 
-my $readNumber = @readFiles;
+my $readNumber;
 
-print " Total message number : $totalNumber\n\n";
 
 START:
 
-print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press N to check NEW Messages\n     Press O  to check OLD  Messages\n     Press W ro write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
+print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press M to check Messages\n     Press W ro write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
 my $newFiles;
 
 
@@ -45,20 +44,41 @@ while(<>)
 	{
 		
 
-# Reading old messages
-		  if ($_=~ m/o/i)
+	# Reading messages
+		 if ($_=~ m/M/i)
                         {
                                 my $i = 1;
-                                my $j = $i + $numDisplayed;
+                                
+				DISPLAY:
+
+			# Check new messages
+				opendir (my $NEW , $newDirectory) or die "Can not open new directory: $!\n";
+				my @newFiles = grep !/^\./, readdir($NEW);
+				@newFiles = sort @newFiles;
+				close ($NEW);
+			# Check Read messages
+				opendir (my $READ , $readDirectory) or die "Can not open new directory: $!\n";
+				my @readFiles = grep !/^\./, readdir($READ);
+				@readFiles = sort @readFiles;
+				close ($READ);
+			# Create variables
+				@totalArray = (@newFiles,@readFiles);
+				$totalNumber = @totalArray;
+				$unreadNumber = @newFiles;
+				$readNumber = @readFiles;
+
+				
+
+				my $j = $i + $numDisplayed;
+
 				print "\nMessages from $i - $j:\n\n";
 
-				OLDDISPLAY:
 				my $sumNumDisplayed = $i + $numDisplayed;
 				for ($i; $i <=$sumNumDisplayed; $i++)
                                                         {	
 								if($totalArray[$i-1])
 									{
-										if ($i < $unreadNumber)
+										if ($i <= $unreadNumber)
 											{
 												print BOLD RED "NEW message number $i: $totalArray[$i-1]\n";
 											}
@@ -66,7 +86,6 @@ while(<>)
 											{
 												print BOLD YELLOW  "Old message number $i: $totalArray[$i-1]\n";
 											}
-	
 									}
 								
                                                         }
@@ -81,18 +100,40 @@ while(<>)
 
 				print BOLD BLUE "     Press X to return to the main menu\n";
 				print "\n";
-			while(<>)
-				{
+
+				while(<>)
+					{
 					# Read message
 					if ($_ =~ m/[0-9]/)
 						{
 							chomp $_;
-							my $messageNumber = $_;
-							print BOLD GREEN "Old message number $_:\n\n";
-							my $oldMessage = `cat /home/ubuntu/Mail/Read/$readFiles[$_-1]`;
-							chomp $oldMessage;
-							print BOLD YELLOW "\""."$oldMessage"."\""."\n\n";
-							
+							my $messageNumber;
+					
+							# Reading NEW messages
+							if($_ <= $unreadNumber)
+								{
+									print "New messages\n";
+									$messageNumber = $_;
+									print BOLD GREEN "New message number $_:\n\n";
+									my $newMessage = `cat /home/ubuntu/Mail/New/$totalArray[$_-1]`;
+									chomp $newMessage;
+									print BOLD YELLOW "\""."$newMessage"."\""."\n\n";
+									# Moving New message  to Read folder
+									rename "/home/ubuntu/Mail/New/$newFiles[$messageNumber-1]","/home/ubuntu/Mail/Read/$newFiles[$messageNumber -1]";  
+								}
+
+							else 
+							# Reading old message
+								{
+									print "In old messages\n";
+									$messageNumber = $_;
+                                                                        print BOLD GREEN "Message number $_:\n\n";
+                                                                        my $oldMessage = `cat /home/ubuntu/Mail/Read/$totalArray[$_-1]`;
+                                                                        chomp $oldMessage;
+                                                                        print BOLD YELLOW "\""."$oldMessage"."\""."\n\n";
+								}
+
+
 							# After reading message;
 							print BOLD BLUE "     Press R to Replay to this message\n     Press D to delate this message\n     Press X to return to messages list\n     Press Q to return to mail menu\n\n";
 							while (<>)
@@ -100,7 +141,7 @@ while(<>)
 									if ($_ =~ m/r/i)
 										{
 											# Replay
-											OLDREPLAY:
+											REPLAY:
 											print BOLD GREEN "REPLAY TO MESSAGE:\n\n";
 											print BOLD BLUE "Write text and press ENTER\n\n";
 											while(<>)
@@ -111,7 +152,7 @@ while(<>)
 													my @charNum = split(//,$text);
 													my $numChar = @charNum;
 													print "Your text: $text\nNumber of characters is: $numChar\n\n";
-													OLDREPLAYRESPONSE:
+													REPLAYRESPONSE:
 													print BOLD BLUE "     Press Y to send it\n     Press N to write message again\n     Press X to returm\n\n";
 													while(<>)
 													{
@@ -120,22 +161,22 @@ while(<>)
 																print BOLD RED "Message sent !!\n\n";
 																$sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
         					                                                                                $i = $i - $numDisplayed - 1;
-																goto OLDDISPLAY;
+																goto DISPLAY;
 															}
 														elsif($_ =~ m/n/i)
 															{
-																goto OLDREPLAY;
+																goto REPLAY;
 															}
 														 elsif($_ =~ m/x/i)
                                                                                                                         {
                                                                                                                                 $sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
 					                                                                                        $i = $i - $numDisplayed - 1;
-																goto OLDDISPLAY;
+																goto DISPLAY;
                                                                                                                         }
 														else 
 															{
 																print BOLD RED "Uhh? Y, N or X only, try again\n\n";
-																goto OLDREPLAYRESPONSE;
+																goto REPLAYRESPONSE;
 															}
 
 
@@ -155,7 +196,14 @@ while(<>)
                                                                                                                 if ($_ =~ m/Y/i)
                                                                                                                         {
                                                                                                                                 print "Message number $messageNumber dalated\n\n";
-                                                                                                                       #         unlink "/home/ubuntu/Mail/Read/$readFiles[$_ -1]";
+																if ($messageNumber <= $unreadNumber)
+																	{
+                                                                                                                       			         unlink "/home/ubuntu/Mail/New/$newFiles[$messageNumber -1]";
+																	}
+																else
+																	{
+
+																	}
 
                                                                                                                                 goto STARTMESSAGES;
                                                                                                                         }
@@ -191,7 +239,7 @@ while(<>)
 					if ($_ =~ m/m/i)
                                                 {
 							#print BOLD RED "No more old messages\n\n";
-							goto OLDDISPLAY;
+							goto DISPLAY;
 
 
 						}

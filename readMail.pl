@@ -90,8 +90,50 @@ while(<>)
 									if ($_ =~ m/r/i)
 										{
 											# Replay
+											OLDREPLAY:
 											print BOLD GREEN "REPLAY TO MESSAGE:\n\n";
 											print BOLD BLUE "Write text and press ENTER\n\n";
+											while(<>)
+												{
+													my $text = "";
+													$text = $text.$_;
+													chomp $text;
+													my @charNum = split(//,$text);
+													my $numChar = @charNum;
+													print "Your text: $text\nNumber of characters is: $numChar\n\n";
+													OLDREPLAYRESPONSE:
+													print BOLD BLUE "     Press Y to send it\n     Press N to write message again\n     Press X to returm\n\n";
+													while(<>)
+													{
+														if($_ =~ m/y/i)
+															{
+																print BOLD RED "Message sent !!\n\n";
+																$sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
+        					                                                                                $i = $i - $numDisplayed - 1;
+																goto OLDDISPLAY;
+															}
+														elsif($_ =~ m/n/i)
+															{
+																goto OLDREPLAY;
+															}
+														 elsif($_ =~ m/x/i)
+                                                                                                                        {
+                                                                                                                                $sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
+					                                                                                        $i = $i - $numDisplayed - 1;
+																goto OLDDISPLAY;
+                                                                                                                        }
+														else 
+															{
+																print BOLD RED "Uhh? Y, N or X only, try again\n\n";
+																goto OLDREPLAYRESPONSE;
+															}
+
+
+
+													}
+												}
+													
+
 	
 										}
 									if ($_ =~ m/d/i)

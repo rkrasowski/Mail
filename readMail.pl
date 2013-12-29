@@ -26,9 +26,11 @@ close ($READ);
 
 
 my @totalArray = (@newFiles,@readFiles);
-my $unreadNumber = @newFiles;
-my $totalNumber = @totalArray;
 my $totalArray;
+my $totalNumber = @totalArray;
+
+my $unreadNumber = @newFiles;
+
 my $readNumber = @readFiles;
 
 print " Total message number : $totalNumber\n\n";
@@ -48,22 +50,30 @@ while(<>)
                         {
                                 my $i = 1;
                                 my $j = $i + $numDisplayed;
-				print "\nOld messages from $i - $j:\n\n";
+				print "\nMessages from $i - $j:\n\n";
 
 				OLDDISPLAY:
 				my $sumNumDisplayed = $i + $numDisplayed;
 				for ($i; $i <=$sumNumDisplayed; $i++)
                                                         {	
-								if($readFiles[$i-1])
+								if($totalArray[$i-1])
 									{
-										print BOLD YELLOW  "Old message number $i: $readFiles[$i-1]\n";
+										if ($i < $unreadNumber)
+											{
+												print BOLD RED "NEW message number $i: $totalArray[$i-1]\n";
+											}
+										else
+											{
+												print BOLD YELLOW  "Old message number $i: $totalArray[$i-1]\n";
+											}
+	
 									}
 								
                                                         }
 				
 				print BOLD BLUE "\n     Enter message number that you want to read\n";
 					
-				if($sumNumDisplayed < $readNumber)
+				if($sumNumDisplayed < $totalNumber)
 					{
 						print BOLD BLUE "     Press M to see more old messages\n";
 					}

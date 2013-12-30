@@ -133,7 +133,7 @@ while(<>)
 
 
 							# After reading message;
-							print BOLD BLUE "     Press R to Replay to this message\n     Press D to delate this message\n     Press X to return to messages list\n     Press Q to return to mail menu\n\n";
+							print BOLD BLUE "     Press R to Replay to this message\n     Press D to delate this message\n     Press M to return to messages list\n     Press Q to return to mail menu\n\n";
 							while (<>)
 								{
 									if ($_ =~ m/r/i)
@@ -216,13 +216,13 @@ while(<>)
 
 										}
 
-									if ($_ =~ m/x/i)
+									if ($_ =~ m/M/i)
 										{
 											# Return 
 											$sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
 											$i = $i - $numDisplayed - 1;
 
-											goto OLDDISPLAY; 
+											goto DISPLAY; 
 										}
 
 									 if ($_ =~ m/q/i)
@@ -252,191 +252,6 @@ while(<>)
                         }
 
 
-# Reading new messages
-
-		if ($_ =~ m/N/i)
-			{
-
-				if ($numDisplayed >= $totalNumber)
-					{
-						print "Messages:\n\n";
-						my $smsNum = 1;
-					
-						my $i;
-						my $j;
-				
-						for ($i = 1; $i <=$unreadNumber; $i++)
-							{
-								print BOLD RED "Unread message number $i: $newFiles[$i-1]\n";
-							}
-						for ($j = $unreadNumber+1; $j<= $totalNumber; $j++)
-							{			
-								print BOLD YELLOW"Old message number $j: $totalArray[$j-1]\n"; 
-
-							}
-			   			print BOLD BLUE "\n\n      Enter message number that you want to read and press ENTER\n";
-
-		
-					}
-
-				my $sep;
-				if ($numDisplayed < $totalNumber)
-					{
-						print "Last 10 mesages:\n\n";
-						
-						for ($sep = 1; $sep <=$numDisplayed; $sep++)
-							{
-                                                                print BOLD RED "Unread message number $sep: $newFiles[$sep-1]\n";
-                                                        }
-						print "Sep is $sep\n\n";
-						
-						print BOLD BLUE "\n\n     Enter message number that you want to read\n     Press M to see more messages\n\n";
-									
-						        
-					}
-
-
-				ONLY10:
-			
-				while(<>)
-					{
-						
-
-						if ($_ =~ m/m/i)
-							{
-								my $nextNum = $sep + $numDisplayed;
-								print "Messages $sep  - $nextNum\n";
-								
-								for ( $sep; $sep<=$nextNum; $sep++)
-                                                        		{
-                                                                		print BOLD RED "Unread message number $sep: $newFiles[$sep-1]\n";
-										if ($_ =~ m//)
-											{
-												goto READMESSAGES;
-											}
-                                                        		}
-                                                print "Sep is $sep\n\n";
-						print BOLD BLUE "\n\n     Enter message number that you want to read\n     Press M to see more messages\n\n";
-						goto ONLY10;
-
-
-						READMESSAGES: {print "All new messages\n";}
-
-								
-							}
-					
-
-						elsif ($_ <= $unreadNumber)
-							{
-								my $arrayNum = $_ - 1;
-								my $sms = `cat /home/ubuntu/Mail/New/$newFiles[$arrayNum]`;
-
-								# move message to Read folder 
-                                                                rename "/home/ubuntu/Mail/New/$newFiles[$arrayNum]","/home/ubuntu/Mail/Read/$newFiles[$arrayNum]";
-								
-								my $messageNumber = $_;
-                                                                chomp $messageNumber;
-								
-								print "\nYour message  number $messageNumber:\n\n";
-								print BOLD YELLOW "$sms\n\n";
-								print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to Main Menu\n     Press x to erase this message\n\n";
-								while(<>)
-									{
-										if ($_ =~ m/1/)
-											{
-												print BOLD GREEN "Write your message and press ENTER\n";
-											}
-
-										if ($_=~ m/2/)
-											{
-												goto START;
-											}
-										if ($_=~ m/x/i)
-											{
-
-												print BOLD RED "Are you sure, you want to delay message number $messageNumber? Press Y or N !!\n\n";
-                                                                                                while(<>)
-                                                                                                        {
-                                                                                                                if ($_ =~ m/Y/i)
-                                                                                                                        {
-                                                                                                                                print "Message number $messageNumber dalated\n\n";
-                                                                                                                                unlink "/home/ubuntu/Mail/Read/$newFiles[$arrayNum]";
-
-                                                                                                                                goto START;
-                                                                                                                        }
-                                                                                                                if ($_  =~ m/N/i)
-                                                                                                                        {
-                                                                                                                                print "Message number $messageNumber NOT delated\n\n";
-                                                                                                                                goto START;
-                                                                                                                        }
-                                                                                                                else {print "Try again , Y or N\n\n";}
-
-                                                                                                        }
-
-											}
-										else {print "Try again, 1, 2 or x only\n\n";}
-									}
-							}
-						
-						elsif ($_ > $unreadNumber and $_ <= $totalNumber)
-                                                        {
-                                                                my $arrayNum = $_ - 1 - $unreadNumber;
-                                                                my $sms = `cat /home/ubuntu/Mail/Read/$readFiles[$arrayNum]`;
-                                                                my $messageNumber = $_;
-								chomp $messageNumber;
-                                                                print "\nYour message  number $messageNumber:\n\n";
-                                                                print BOLD YELLOW "$sms\n\n";
-                                                                print BOLD BLUE "     Press 1 to reply to this message\n     Press 2 to return to messages list\n     Press x to erase this message\n\n";
-
-								  while(<>)
-                                                                        {
-                                                                                if ($_ =~ m/1/)
-                                                                                        {
-                                                                                                print BOLD GREEN "Write your message and press ENTER\n";
-                                                                                        }
-
-                                                                                if ($_=~ m/2/)
-                                                                                        {
-                                                                                                goto STARTMESSAGES;
-                                                                                        }
-                                                                                if ($_ =~ m/x/i)
-                                                                                        {
-                                                                                                print BOLD RED "Are you sure, you want to delay message number $messageNumber? Press Y or N !!\n\n";
-                                                                                                while(<>)
-                                                                                                        {
-                                                                                                                if ($_ =~ m/Y/i)
-                                                                                                                        {
-                                                                                                                                print "Message number $messageNumber dalated\n\n";
-																unlink "/home/ubuntu/Mail/Read/$readFiles[$arrayNum]";
-
-                                                                                                                                goto STARTMESSAGES;
-                                                                                                                        }
-                                                                                                                if ($_  =~ m/N/i)
-                                                                                                                        {
-                                                                                                                                print "Message number $messageNumber NOT delated\n\n";
-                                                                                                                                goto STARTMESSAGES;
-                                                                                                                        }
-                                                                                                                else {print "Try again , Y or N\n\n";}
-
-                                                                                                        }
-                                                                                        }
-                                                                                else {print "Try again, 1, 2 or x only\n\n";}
-                                                                        }
-
-                                                        }
-						else { print "Wrong number\n";}
-					}
-
-
-			}
-		
-
-
-
-		if ($_ =~ m/w/i)
-			{
-				print "Compose the message:\nEnter destination:\n\n";
-			}
 		
 		
 
@@ -507,6 +322,48 @@ while(<>)
 
 					}
 
+                        }
+
+		 if ($_ =~ m/w/i)
+                        {
+                           	WRITE:
+                              	print BOLD GREEN "MESSAGE EDITOR:\n\n";
+                                print BOLD BLUE "Write text and press ENTER\n\n";
+                                while(<>)
+                                	{
+                                          	my $text = "";
+                                          	$text = $text.$_;
+                                          	chomp $text;
+                                       		my @charNum = split(//,$text);
+                                       		my $numChar = @charNum;
+                                      		print "Your text: $text\nNumber of characters is: $numChar\n\n";
+                                                REPLAYWRITE:
+                                               	print BOLD BLUE "     Press Y to send it\n     Press N to write message again\n     Press M to retur to main menu\n\n";
+                                              	while(<>)
+                                             		{
+                                    				if($_ =~ m/y/i)
+                                                  			{
+                                                  				print BOLD RED "Message submitted into outbox, will be sent ASAP !!\n\n";
+                                                                        	goto STARTMESSAGES;
+                                                              		}
+                                                        	elsif($_ =~ m/n/i)
+                                                             		{
+                                                             			goto WRITE;
+                                                                	}
+                                                        	elsif($_ =~ m/m/i)
+                                                                	{
+                                                                     		goto STARTMESSAGES;
+                                                             		}
+                                                                 else
+                                                                        {
+                                                                              print BOLD RED "Uhh? Y, N or M only, try again\n\n";
+                                                                          	goto REPLAYWRITE;
+                                                                        }
+
+
+
+                                                           }
+					}
                         }
 
 

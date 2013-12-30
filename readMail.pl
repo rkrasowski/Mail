@@ -36,7 +36,7 @@ my $readNumber;
 
 START:
 
-print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press M to check Messages\n     Press W ro write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
+print BOLD BLUE "\nMESSAGES MENAGER\n\n     Press M to check Messages\n     Press W write new message\n     Press C for COMMAND'S log\n     Press X to exit\n\n";
 my $newFiles;
 
 
@@ -130,7 +130,7 @@ while(<>)
                                                                         chomp $oldMessage;
                                                                         print BOLD YELLOW "\""."$oldMessage"."\""."\n\n";
 								}
-
+							AFTERREADING:
 
 							# After reading message;
 							print BOLD BLUE "     Press R to Replay to this message\n     Press D to delate this message\n     Press M to return to messages list\n     Press Q to return to mail menu\n\n";
@@ -185,7 +185,7 @@ while(<>)
 
 	
 										}
-									if ($_ =~ m/d/i)
+									elsif ($_ =~ m/d/i)
 										{
 											# Delate 
 											    print BOLD RED "Are you sure, you want to delay message number $messageNumber? Press Y or N !!\n\n";
@@ -216,7 +216,7 @@ while(<>)
 
 										}
 
-									if ($_ =~ m/M/i)
+									elsif ($_ =~ m/M/i)
 										{
 											# Return 
 											$sumNumDisplayed = $sumNumDisplayed - $numDisplayed - 1;
@@ -225,11 +225,16 @@ while(<>)
 											goto DISPLAY; 
 										}
 
-									 if ($_ =~ m/q/i)
+									 elsif ($_ =~ m/q/i)
                                                                                 {
                                                                                         # Main menu
                                                                                         goto STARTMESSAGES;
                                                                                 }
+									else 
+										{
+											print BOLD RED "Ups, please try again... \n\n";
+											goto AFTERREADING;
+										}
 								}
 						}
 
@@ -258,7 +263,7 @@ while(<>)
 
 
 
-		if ($_ =~ m/c/i)
+		elsif ($_ =~ m/c/i)
                         {
                 		opendir (my $COMMANDS , $commandsDirectory) or die "Can not open new directory: $!\n";
 				my @commandsFiles = grep !/^\./, readdir($COMMANDS);
@@ -324,7 +329,7 @@ while(<>)
 
                         }
 
-		 if ($_ =~ m/w/i)
+		 elsif ($_ =~ m/w/i)
                         {
                            	WRITE:
                               	print BOLD GREEN "MESSAGE EDITOR:\n\n";
@@ -370,11 +375,18 @@ while(<>)
 
 
 
-		 if ($_ =~ m/x/i)
+		 elsif ($_ =~ m/x/i)
                         {
                                 print "Exiting.....\n\n";
 				exit();
                         }
+
+		 else
+                      	{
+                       		print BOLD RED "Ups, please try again... \n\n";
+                           	goto STARTMESSAGES;
+                   	}
+
 
 
 	}
